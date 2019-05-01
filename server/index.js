@@ -18,7 +18,7 @@ require('./services/passport');
 app.use(routes)
 
 app.get('/', (req,res)=>{
-  console.log(req.user)
+  console.log('req.user', req.user)
   res.send(req.user)
 })
 
