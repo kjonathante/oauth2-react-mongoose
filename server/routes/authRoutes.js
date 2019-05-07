@@ -8,7 +8,6 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/callback', 
   passport.authenticate('google', {failureRedirect: "/login", session: true }), //, {failureRedirect: "/", session: false }
   (req,res) => {
-    const token = req.user.token
     console.log('authRoutes.js /auth/google/callback', req.user)
     res.redirect('/');
   }

@@ -4,7 +4,10 @@ const passport = require("passport");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const routes = require("./routes");
-const db = require('./models')
+// require('./models')
+require("./services/passport");
+
+
 mongoose.connect("mongodb://localhost/oauth", {
   useNewUrlParser: true
 });
@@ -19,8 +22,6 @@ app.use(
 app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
-require("./services/passport");
-
 app.use(routes);
 
 app.get("/whoami", (req, res) => {

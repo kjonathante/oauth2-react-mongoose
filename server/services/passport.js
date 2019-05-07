@@ -1,10 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const mongoose = require('mongoose');
 const keys = require('../config/keys');
-
-const User = mongoose.model('User');
-
+const db = require('../models')
 // Configure Passport authenticated session persistence.
 //
 // In order to restore authentication state across HTTP requests, Passport needs
@@ -21,7 +18,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser( async function(id, done) {
   console.log("passport.js deserializeUser id", id)
-  user = await User.findById( id );
+  user = await db.User.findById( id );
 	done(null, user);
 });
 
@@ -38,12 +35,12 @@ passport.use(
     //   token: accessToken
     // };
     // done(null, userData);
-    const existingUser = await User.findOne({ googleId: profile.id });
+    const existingUser = await db.User.findOne({ googleId: profile.id });
     if(existingUser) {
       console.log("passport.js passport.use existingUser", existingUser)
       done(null, existingUser);
     } else {
-      const newUser = await User({ googleId: profile.id, displayName: profile.displayName }).save();
+      const newUser = await db.User({ googleId: profile.id, displayName: profile.displayName }).save();
       console.log("passport.js passport.use newUser", newUser)
       done(null, newUser);
     }
