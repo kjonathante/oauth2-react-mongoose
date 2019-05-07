@@ -1,8 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-// const mongoose = require('mongoose');
 const keys = require('../config/keys');
-
+const db = require('../models')
 // Configure Passport authenticated session persistence.
 //
 // In order to restore authentication state across HTTP requests, Passport needs
@@ -11,12 +10,15 @@ const keys = require('../config/keys');
 // supplying the user ID when serializing, and querying the user record by ID
 // from the database when deserializing.
 passport.serializeUser(function(user, done) {
-  console.log("serializeUser user", user)
-	done(null, user);
+  // console.log("passport serializeUser user", user)
+  console.log("passport.js serializeUser user.id", user.id)
+  const id = user.id
+	done(null, id);
 });
 
-passport.deserializeUser(function(user, done) {
-  console.log("deserializeUser user", user)
+passport.deserializeUser( async function(id, done) {
+  console.log("passport.js deserializeUser id", id)
+  user = await db.User.findById( id );
 	done(null, user);
 });
 
@@ -27,11 +29,20 @@ passport.use(
     callbackURL: "/auth/google/callback",
     proxy: true
   }, async (accessToken, refreshToken, profile, done) => {
-    const userData = {
-      email: profile.emails[0].value,
-      name: profile.displayName,
-      token: accessToken
-    };
-    done(null, userData);
+    // const userData = {
+    //   email: profile.emails[0].value,
+    //   name: profile.displayName,
+    //   token: accessToken
+    // };
+    // done(null, userData);
+    const existingUser = await db.User.findOne({ googleId: profile.id });
+    if(existingUser) {
+      console.log("passport.js passport.use existingUser", existingUser)
+      done(null, existingUser);
+    } else {
+      const newUser = await db.User({ googleId: profile.id, displayName: profile.displayName }).save();
+      console.log("passport.js passport.use newUser", newUser)
+      done(null, newUser);
+    }
   })
 );
