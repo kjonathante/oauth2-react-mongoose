@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+export const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3002' : ''
+
 function App() {
   const [name, setName] = useState("")
   useEffect(() => {
@@ -7,7 +9,6 @@ function App() {
       .then(r => r.json())
       .then(data => {
         console.log(data)
-        console.log(process.env.NODE_ENV)
         if (data.displayName)
           setName(data.displayName)
       })
@@ -17,10 +18,10 @@ function App() {
     <div>
       Hello{ name && `, ${name}`}
       <div>
-        <a href="http://localhost:3002/auth/google">Login</a>
+        <a href={`${baseUrl}/auth/google`}>Login</a>
       </div>
       <div>
-        <a href="http://localhost:3002/auth/logout">Logout</a>
+        <a href={`${baseUrl}/auth/logout`}>Logout</a>
       </div>
     </div>
   );

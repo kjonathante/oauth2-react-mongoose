@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 const express = require("express");
 const passport = require("passport");
 const session = require("express-session");
@@ -6,7 +7,7 @@ const mongoose = require("mongoose");
 const routes = require("./routes");
 require("./services/passport");
 
-mongoose.connect("mongodb://localhost/oauth", {
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/oauth", {
   useNewUrlParser: true
 });
 
